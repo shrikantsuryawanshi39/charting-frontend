@@ -17,15 +17,26 @@ function App() {
       const chartJson = await chartRes.json();
       const designJson = await designRes.json();
 
-      const formattedData = chartJson.x.map((xVal, index) => ({
-        [designJson.xAxisField]: xVal,
-        [designJson.yAxisField]: chartJson.y[index],
-        [designJson.performanceField]: chartJson.performance[index],
-      }));
+      // Format data for multiple datasets
+      const formattedData = chartJson.datasets.map((dataset) =>
+        chartJson.x.map((xVal, index) => ({
+          name: dataset.name,
+          [designJson.xAxisField]: xVal,
+          [designJson.yAxisField]: dataset.y[index],
+        }))
+      );
+
+      /**
+       * formattedData will now be like:
+       * [
+       *   [{name: 'Events A', Day: 'sunday', Events: 10}, ...],
+       *   [{name: 'Events B', Day: 'sunday', Events: 15}, ...]
+       * ]
+       */
 
       setDesign(designJson);
       setData(formattedData);
-      setChartType(designJson.chartType); 
+      setChartType(designJson.chartType);
     } catch (error) {
       console.error('Failed to load data:', error);
     }
@@ -33,6 +44,7 @@ function App() {
 
   const renderChart = () => {
     const props = { data, design };
+
     switch (chartType) {
       case 'line':
         return <LineChartD3 {...props} />;
