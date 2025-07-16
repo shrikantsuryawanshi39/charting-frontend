@@ -26,14 +26,6 @@ function App() {
         }))
       );
 
-      /**
-       * formattedData will now be like:
-       * [
-       *   [{name: 'Events A', Day: 'sunday', Events: 10}, ...],
-       *   [{name: 'Events B', Day: 'sunday', Events: 15}, ...]
-       * ]
-       */
-
       setDesign(designJson);
       setData(formattedData);
       setChartType(designJson.chartType);
@@ -44,7 +36,7 @@ function App() {
 
   const renderChart = () => {
     const props = { data, design };
-
+    if (!design || !data) {return <p className="text-purple-600">Enter Widget Id to see Chart...</p>}
     switch (chartType) {
       case 'line':
         return <LineChartD3 {...props} />;
